@@ -1,0 +1,738 @@
+{
+  annotations {
+    list [
+      {
+        builtIn 1,
+        datasource {
+          type grafana,
+          uid -- Grafana --
+        },
+        enable true,
+        hide true,
+        iconColor rgba(0, 211, 255, 1),
+        name Annotations & Alerts,
+        type dashboard
+      }
+    ]
+  },
+  editable true,
+  fiscalYearStartMonth 0,
+  graphTooltip 0,
+  id 4,
+  links [],
+  panels [
+    {
+      collapsed true,
+      gridPos {
+        h 1,
+        w 24,
+        x 0,
+        y 0
+      },
+      id 2,
+      panels [
+        {
+          datasource {
+            type grafana-postgresql-datasource,
+            uid derjkd5k0mtq8e
+          },
+          fieldConfig {
+            defaults {
+              color {
+                mode thresholds
+              },
+              custom {
+                align auto,
+                cellOptions {
+                  type auto
+                },
+                inspect false
+              },
+              mappings [],
+              thresholds {
+                mode absolute,
+                steps [
+                  {
+                    color green
+                  }
+                ]
+              }
+            },
+            overrides [
+              {
+                matcher {
+                  id byName,
+                  options temperature_value
+                },
+                properties [
+                  {
+                    id thresholds,
+                    value {
+                      mode absolute,
+                      steps [
+                        {
+                          color green
+                        },
+                        {
+                          color light-red,
+                          value 0
+                        },
+                        {
+                          color light-yellow,
+                          value 16
+                        },
+                        {
+                          color light-green,
+                          value 18
+                        },
+                        {
+                          color #EAB839,
+                          value 24
+                        },
+                        {
+                          color light-red,
+                          value 25
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    id custom.cellOptions,
+                    value {
+                      applyToRow false,
+                      mode gradient,
+                      type color-background,
+                      wrapText false
+                    }
+                  }
+                ]
+              },
+              {
+                matcher {
+                  id byName,
+                  options temperature_trend
+                },
+                properties [
+                  {
+                    id custom.width,
+                    value 20
+                  }
+                ]
+              },
+              {
+                matcher {
+                  id byName,
+                  options oxygen_concentration_trend
+                },
+                properties [
+                  {
+                    id custom.width,
+                    value 20
+                  }
+                ]
+              },
+              {
+                matcher {
+                  id byName,
+                  options Oxygen Concentration
+                },
+                properties [
+                  {
+                    id thresholds,
+                    value {
+                      mode absolute,
+                      steps [
+                        {
+                          color green
+                        },
+                        {
+                          color light-red,
+                          value 0
+                        },
+                        {
+                          color yellow,
+                          value 2.1
+                        },
+                        {
+                          color light-green,
+                          value 5.0001
+                        },
+                        {
+                          color yellow,
+                          value 8.0001
+                        },
+                        {
+                          color light-red,
+                          value 11.0001
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    id color,
+                    value {
+                      mode thresholds
+                    }
+                  },
+                  {
+                    id custom.cellOptions,
+                    value {
+                      applyToRow false,
+                      mode gradient,
+                      type color-background,
+                      wrapText false
+                    }
+                  }
+                ]
+              },
+              {
+                matcher {
+                  id byName,
+                  options Oxygen Saturation
+                },
+                properties [
+                  {
+                    id thresholds,
+                    value {
+                      mode absolute,
+                      steps [
+                        {
+                          color green
+                        },
+                        {
+                          color red,
+                          value 0
+                        },
+                        {
+                          color yellow,
+                          value 60.0001
+                        },
+                        {
+                          color light-green,
+                          value 80.0001
+                        },
+                        {
+                          color yellow,
+                          value 110.0001
+                        },
+                        {
+                          color light-red,
+                          value 130
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    id custom.cellOptions,
+                    value {
+                      applyToRow false,
+                      mode gradient,
+                      type color-background,
+                      wrapText false
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          gridPos {
+            h 8,
+            w 24,
+            x 0,
+            y 1
+          },
+          id 1,
+          maxPerRow 4,
+          options {
+            cellHeight sm,
+            footer {
+              countRows false,
+              fields ,
+              reducer [
+                sum
+              ],
+              show false
+            },
+            showHeader true
+          },
+          pluginVersion 12.0.2,
+          repeat pool_id,
+          repeatDirection v,
+          targets [
+            {
+              datasource {
+                type grafana-postgresql-datasource,
+                uid derjkd5k0mtq8e
+              },
+              editorMode code,
+              format table,
+              rawQuery true,
+              rawSql WITH temp AS (rn  SELECTrn    pool_id,rn    reading_time,rn    reading AS temperature_value,rn    LAG(reading) OVER (PARTITION BY pool_id ORDER BY reading_time) AS temperature_prevrn  FROM sensor_db.temperaturern  WHERE pool_id = ${pool_id}rn),rno2c AS (rn  SELECTrn    pool_id,rn    reading_time,rn    reading AS oxygen_concentration_value,rn    LAG(reading) OVER (PARTITION BY pool_id ORDER BY reading_time) AS oxygen_concentration_prevrn  FROM sensor_db.oxygen_concentrationrn  WHERE pool_id = ${pool_id}rn),rno2s AS (rn  SELECTrn    pool_id,rn    reading_time,rn    reading AS oxygen_saturation_value,rn    LAG(reading) OVER (PARTITION BY pool_id ORDER BY reading_time) AS oxygen_saturation_prevrn  FROM sensor_db.oxygen_saturationrn  WHERE pool_id = ${pool_id}rn)rnrnSELECTrn  temp.reading_time,rnrn  temp.temperature_value,rn  CASErn    WHEN temp.temperature_value  temp.temperature_prev THEN '⬆️'rn    WHEN temp.temperature_value  temp.temperature_prev THEN '⬇️'rn    ELSE '🟰'rn  END AS temperature_trend,rnrn  o2c.oxygen_concentration_value,rn  CASErn    WHEN o2c.oxygen_concentration_value  o2c.oxygen_concentration_prev THEN '⬆️'rn    WHEN o2c.oxygen_concentration_value  o2c.oxygen_concentration_prev THEN '⬇️'rn    ELSE '🟰'rn  END AS oxygen_concentration_trend,rnrn  o2s.oxygen_saturation_value,rn  CASErn    WHEN o2s.oxygen_saturation_value  o2s.oxygen_saturation_prev THEN '⬆️'rn    WHEN o2s.oxygen_saturation_value  o2s.oxygen_saturation_prev THEN '⬇️'rn    ELSE '🟰'rn  END AS oxygen_saturation_trendrnrnFROM temprnLEFT JOIN o2c ON temp.pool_id = o2c.pool_id AND temp.reading_time = o2c.reading_timernLEFT JOIN o2s ON temp.pool_id = o2s.pool_id AND temp.reading_time = o2s.reading_timernrnORDER BY temp.reading_time DESCrnLIMIT 50;rn,
+              refId A,
+              sql {
+                columns [
+                  {
+                    parameters [],
+                    type function
+                  }
+                ],
+                groupBy [
+                  {
+                    property {
+                      type string
+                    },
+                    type groupBy
+                  }
+                ],
+                limit 50
+              }
+            }
+          ],
+          title Sensor Data,
+          transformations [
+            {
+              id organize,
+              options {
+                excludeByName {},
+                includeByName {},
+                indexByName {},
+                renameByName {
+                  oxygen_concentration_trend  ,
+                  oxygen_concentration_value Oxygen Concentration,
+                  oxygen_saturation_trend ,
+                  oxygen_saturation_value Oxygen Saturation,
+                  reading_time Mesure date,
+                  temperature_trend  ,
+                  temperature_value Temperature
+                }
+              }
+            }
+          ],
+          type table
+        }
+      ],
+      title Sensor Data,
+      type row
+    },
+    {
+      collapsed true,
+      gridPos {
+        h 1,
+        w 24,
+        x 0,
+        y 1
+      },
+      id 3,
+      panels [
+        {
+          datasource {
+            type grafana-postgresql-datasource,
+            uid derjkd5k0mtq8e
+          },
+          fieldConfig {
+            defaults {
+              color {
+                mode thresholds
+              },
+              mappings [],
+              thresholds {
+                mode absolute,
+                steps [
+                  {
+                    color green
+                  },
+                  {
+                    color red,
+                    value 80
+                  }
+                ]
+              }
+            },
+            overrides []
+          },
+          gridPos {
+            h 8,
+            w 12,
+            x 0,
+            y 2
+          },
+          id 4,
+          options {
+            nestedObjects [],
+            tables [
+              {
+                actionsColumnConfig {
+                  alignment start,
+                  fontSize md,
+                  label ,
+                  width {
+                    auto true,
+                    value 100
+                  }
+                },
+                addRow {
+                  enabled false,
+                  permission {
+                    mode ,
+                    userRole []
+                  },
+                  request {
+                    datasource ,
+                    payload {}
+                  }
+                },
+                deleteRow {
+                  enabled false,
+                  permission {
+                    mode ,
+                    userRole []
+                  },
+                  request {
+                    datasource ,
+                    payload {}
+                  }
+                },
+                expanded false,
+                items [
+                  {
+                    aggregation none,
+                    appearance {
+                      alignment start,
+                      background {
+                        applyToRow false
+                      },
+                      colors {},
+                      header {
+                        fontSize md
+                      },
+                      width {
+                        auto true,
+                        min 20,
+                        value 100
+                      },
+                      wrap true
+                    },
+                    columnTooltip ,
+                    edit {
+                      editor {
+                        type string
+                      },
+                      enabled false,
+                      permission {
+                        mode ,
+                        userRole []
+                      }
+                    },
+                    enabled true,
+                    field {
+                      name id,
+                      source A
+                    },
+                    fileCell {
+                      size md,
+                      text Download,
+                      variant primary
+                    },
+                    filter {
+                      enabled false,
+                      mode client,
+                      variable 
+                    },
+                    footer [],
+                    gauge {
+                      mode basic,
+                      valueDisplayMode text,
+                      valueSize 14
+                    },
+                    group false,
+                    label Device ID,
+                    newRowEdit {
+                      editor {
+                        type string
+                      },
+                      enabled false
+                    },
+                    objectId ,
+                    pin ,
+                    preformattedStyle false,
+                    scale auto,
+                    showingRows 20,
+                    sort {
+                      descFirst false,
+                      enabled false
+                    },
+                    type auto
+                  },
+                  {
+                    aggregation none,
+                    appearance {
+                      alignment start,
+                      background {
+                        applyToRow false
+                      },
+                      colors {},
+                      header {
+                        fontSize md
+                      },
+                      width {
+                        auto true,
+                        min 20,
+                        value 100
+                      },
+                      wrap true
+                    },
+                    columnTooltip ,
+                    edit {
+                      editor {
+                        type string
+                      },
+                      enabled false,
+                      permission {
+                        mode ,
+                        userRole []
+                      }
+                    },
+                    enabled true,
+                    field {
+                      name pool_id,
+                      source A
+                    },
+                    fileCell {
+                      size md,
+                      text Download,
+                      variant primary
+                    },
+                    filter {
+                      enabled false,
+                      mode client,
+                      variable 
+                    },
+                    footer [],
+                    gauge {
+                      mode basic,
+                      valueDisplayMode text,
+                      valueSize 14
+                    },
+                    group false,
+                    label In Pool,
+                    newRowEdit {
+                      editor {
+                        type string
+                      },
+                      enabled false
+                    },
+                    objectId ,
+                    pin ,
+                    preformattedStyle false,
+                    scale auto,
+                    showingRows 20,
+                    sort {
+                      descFirst false,
+                      enabled false
+                    },
+                    type auto
+                  },
+                  {
+                    aggregation none,
+                    appearance {
+                      alignment start,
+                      background {
+                        applyToRow false
+                      },
+                      colors {},
+                      header {
+                        fontSize md
+                      },
+                      width {
+                        auto false,
+                        min 20,
+                        value 100
+                      },
+                      wrap true
+                    },
+                    columnTooltip ,
+                    edit {
+                      editor {
+                        type boolean
+                      },
+                      enabled true,
+                      permission {
+                        mode ,
+                        userRole []
+                      }
+                    },
+                    enabled true,
+                    field {
+                      name polling,
+                      source A
+                    },
+                    fileCell {
+                      size md,
+                      text Download,
+                      variant primary
+                    },
+                    filter {
+                      enabled false,
+                      mode client,
+                      variable 
+                    },
+                    footer [],
+                    gauge {
+                      mode basic,
+                      valueDisplayMode text,
+                      valueSize 14
+                    },
+                    group false,
+                    label Polling,
+                    newRowEdit {
+                      editor {
+                        type string
+                      },
+                      enabled false
+                    },
+                    objectId ,
+                    pin ,
+                    preformattedStyle false,
+                    scale auto,
+                    showingRows 20,
+                    sort {
+                      descFirst false,
+                      enabled false
+                    },
+                    type boolean
+                  }
+                ],
+                name Devices,
+                pagination {
+                  defaultPageSize 10,
+                  enabled false,
+                  mode client
+                },
+                rowHighlight {
+                  backgroundColor transparent,
+                  columnId ,
+                  enabled false,
+                  scrollTo ,
+                  smooth false,
+                  variable 
+                },
+                showHeader true,
+                stripedRows false,
+                update {
+                  datasource derjkd5k0mtq8e,
+                  payload {
+                    editorMode code,
+                    format table,
+                    rawQuery true,
+                    rawSql UPDATE sensor_db.devicernSET polling = ${payload.polling}rnWHERE id = '${payload.id}';,
+                    refId A,
+                    sql {
+                      columns [
+                        {
+                          parameters [],
+                          type function
+                        }
+                      ],
+                      groupBy [
+                        {
+                          property {
+                            type string
+                          },
+                          type groupBy
+                        }
+                      ],
+                      limit 50
+                    }
+                  }
+                }
+              }
+            ],
+            toolbar {
+              alignment left
+            }
+          },
+          pluginVersion 3.0.0,
+          targets [
+            {
+              datasource {
+                type grafana-postgresql-datasource,
+                uid derjkd5k0mtq8e
+              },
+              editorMode code,
+              format table,
+              rawQuery true,
+              rawSql SELECTrn  id,rn  pool_id,rn  pollingrnFROM sensor_db.device,
+              refId A,
+              sql {
+                columns [
+                  {
+                    parameters [],
+                    type function
+                  }
+                ],
+                groupBy [
+                  {
+                    property {
+                      type string
+                    },
+                    type groupBy
+                  }
+                ],
+                limit 50
+              }
+            }
+          ],
+          title Devices activity,
+          type volkovlabs-table-panel
+        }
+      ],
+      title Devices activity,
+      type row
+    }
+  ],
+  preload false,
+  schemaVersion 41,
+  tags [],
+  templating {
+    list [
+      {
+        allowCustomValue false,
+        current {
+          text [
+            1,
+            2,
+            3
+          ],
+          value [
+            1,
+            2,
+            3
+          ]
+        },
+        datasource {
+          type grafana-postgresql-datasource,
+          uid derjkd5k0mtq8e
+        },
+        definition SELECT id FROM sensor_db.pool ORDER BY id,
+        includeAll true,
+        label pool,
+        multi true,
+        name pool_id,
+        options [],
+        query SELECT id FROM sensor_db.pool ORDER BY id,
+        refresh 1,
+        regex ,
+        type query
+      }
+    ]
+  },
+  time {
+    from 2025-07-10T202715.303Z,
+    to 2025-07-10T202923.748Z
+  },
+  timepicker {},
+  timezone browser,
+  title Fishki,
+  uid dbd984b9-cbc0-4e19-9632-0a90fdebc4f5,
+  version 11
+}
