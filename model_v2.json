@@ -1,0 +1,122 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 5,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "derjkd5k0mtq8e"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 22,
+        "w": 21,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "afterRender": "const COLORS = {\r\n  COLD: '#4D9DE0',\r\n  COOL: '#51FA8D',\r\n  OPTIMAL: '#4CFF8F',\r\n  WARM: '#FFD93D',\r\n  HOT: '#FF914D',\r\n  CRITICAL: '#FF4C4C'\r\n};\r\n\r\nconst temperatureThresholds = [\r\n  { max: 12, color: COLORS.COLD },\r\n  { max: 18, color: COLORS.COOL },\r\n  { max: 25, color: COLORS.OPTIMAL },\r\n  { max: 28, color: COLORS.WARM },\r\n  { max: 30, color: COLORS.HOT },\r\n  { max: Infinity, color: COLORS.CRITICAL }\r\n];\r\n\r\nconst o2cThresholds = [\r\n  { max: 2, color: COLORS.CRITICAL },\r\n  { max: 4, color: COLORS.HOT },\r\n  { max: 6, color: COLORS.WARM },\r\n  { max: 8, color: COLORS.OPTIMAL },\r\n  { max: Infinity, color: COLORS.COOL }\r\n];\r\n\r\nconst o2sThresholds = [\r\n  { max: 50, color: COLORS.CRITICAL },\r\n  { max: 70, color: COLORS.HOT },\r\n  { max: 85, color: COLORS.WARM },\r\n  { max: 95, color: COLORS.OPTIMAL },\r\n  { max: Infinity, color: COLORS.COOL }\r\n];\r\n\r\nfunction getTempStatus(temp) {\r\n  return temperatureThresholds.find(thresh => temp <= thresh.max);\r\n}\r\n\r\nfunction getO2CStatus(value) {\r\n  return o2cThresholds.find(thresh => value <= thresh.max);\r\n}\r\n\r\nfunction getO2SStatus(value) {\r\n  return o2sThresholds.find(thresh => value <= thresh.max);\r\n}\r\n\r\ndocument.querySelectorAll('.values-row').forEach(row => {\r\n  const tempText = row.querySelector('#temp p');\r\n  const tempValue = parseFloat(tempText.textContent);\r\n  tempText.style.color = !isNaN(tempValue) ? getTempStatus(tempValue).color : 'gray';\r\n\r\n  const o2cText = row.querySelector('#o2c p');\r\n  const o2cValue = parseFloat(o2cText.textContent);\r\n  o2cText.style.color = !isNaN(o2cValue) ? getO2CStatus(o2cValue).color : 'gray';\r\n\r\n  const o2sText = row.querySelector('#o2s p');\r\n  const o2sValue = parseFloat(o2sText.textContent);\r\n  o2sText.style.color = !isNaN(o2sValue) ? getO2SStatus(o2sValue).color : 'gray';\r\n});\r\n\r\n// Листай вниз, чтобы увидеть стращные костыли\r\n\r\ndocument.querySelector('.values-row').querySelectorAll('.value-cell').forEach(c => c.querySelector('h2').style.display = 'block')",
+        "content": "<div class='values-row'>\n  <p class=\"pool_id\">{{pool_id}}</p>\n\n  <div class='value-cell' id=\"temp\">\n    <h2>Temperature</h2>\n    <p class='value'>{{temperature_value}}</p>\n    <p>{{temperature_trend}}</p>\n  </div>\n\n  <div class='value-cell' id=\"o2c\">\n    <h2>Oxygen Concentration</h2>\n    <p class='value'>{{oxygen_concentration_value}}</p>\n    <p>{{oxygen_concentration_trend}}</p>\n  </div>\n\n  <div class='value-cell' id=\"o2s\">\n    <h2>Oxygen Saturation</h2>\n    <p class='value'>{{oxygen_saturation_value}}</p>\n    <p>{{oxygen_saturation_trend}}</p>\n  </div>\n</div>\n\n\n\n<style>\n  h2 {\n    display: none\n  }\n\n  .pool_id {\n    position: absolute;\n    top: 50%;\n    transform: translateY(-50%);\n    left: 0;\n  }\n\n  p {\n    font-size: 150px;\n    font-family: monospace;\n    margin-bottom: 0;\n    padding: 0;\n  }\n\n  .values-row {\n    position: relative;\n\n    display: flex;\n    justify-content: center;\n    align-items: center;\npadding: 0;\n    gap: 80px;\n  }\n\n  .value-cell {\n    display: grid;\n    grid-template-columns: 1fr 1fr;\n    justify-items: center;\n    align-items: center;\n    row-gap: 8px;\n    width: 620px;\n    margin-bottom: 0;\n    padding: 0;\n  }\n\n  .value-cell h2 {\n    grid-column: 1 / -1;\n    text-align: center;\n    font-size: 30px;\n    padding: 0;\n  }\n\n  .value {\n    width: 410px\n  }\n\n  .dt-row {\n    margin-bottom: 0;\n    padding: 0;\n  }\n</style>",
+        "contentPartials": [],
+        "defaultContent": "The query didn't return any results.",
+        "editor": {
+          "format": "auto",
+          "language": "html"
+        },
+        "editors": [
+          "afterRender"
+        ],
+        "externalStyles": [],
+        "helpers": "",
+        "renderMode": "everyRow",
+        "styles": "",
+        "wrap": true
+      },
+      "pluginVersion": "5.7.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "derjkd5k0mtq8e"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH latest_temp AS (\r\n  SELECT\r\n    pool_id,\r\n    reading AS temperature_value,\r\n    LAG(reading) OVER (PARTITION BY pool_id ORDER BY reading_time) AS temperature_prev,\r\n    ROW_NUMBER() OVER (PARTITION BY pool_id ORDER BY reading_time DESC) AS rn\r\n  FROM sensor_db.temperature\r\n),\r\nlatest_o2c AS (\r\n  SELECT\r\n    pool_id,\r\n    reading AS oxygen_concentration_value,\r\n    LAG(reading) OVER (PARTITION BY pool_id ORDER BY reading_time) AS oxygen_concentration_prev,\r\n    ROW_NUMBER() OVER (PARTITION BY pool_id ORDER BY reading_time DESC) AS rn\r\n  FROM sensor_db.oxygen_concentration\r\n),\r\nlatest_o2s AS (\r\n  SELECT\r\n    pool_id,\r\n    reading AS oxygen_saturation_value,\r\n    LAG(reading) OVER (PARTITION BY pool_id ORDER BY reading_time) AS oxygen_saturation_prev,\r\n    ROW_NUMBER() OVER (PARTITION BY pool_id ORDER BY reading_time DESC) AS rn\r\n  FROM sensor_db.oxygen_saturation\r\n)\r\n\r\nSELECT\r\n  t.pool_id,\r\n\r\n  t.temperature_value,\r\n  CASE\r\n    WHEN t.temperature_value > t.temperature_prev THEN '⬆️'\r\n    WHEN t.temperature_value < t.temperature_prev THEN '⬇️'\r\n    ELSE '🟰'\r\n  END AS temperature_trend,\r\n\r\n  o2c.oxygen_concentration_value,\r\n  CASE\r\n    WHEN o2c.oxygen_concentration_value > o2c.oxygen_concentration_prev THEN '⬆️'\r\n    WHEN o2c.oxygen_concentration_value < o2c.oxygen_concentration_prev THEN '⬇️'\r\n    ELSE '🟰'\r\n  END AS oxygen_concentration_trend,\r\n\r\n  o2s.oxygen_saturation_value,\r\n  CASE\r\n    WHEN o2s.oxygen_saturation_value > o2s.oxygen_saturation_prev THEN '⬆️'\r\n    WHEN o2s.oxygen_saturation_value < o2s.oxygen_saturation_prev THEN '⬇️'\r\n    ELSE '🟰'\r\n  END AS oxygen_saturation_trend\r\n\r\nFROM latest_temp t\r\nLEFT JOIN latest_o2c o2c\r\n  ON t.pool_id = o2c.pool_id AND o2c.rn = 1\r\nLEFT JOIN latest_o2s o2s\r\n  ON t.pool_id = o2s.pool_id AND o2s.rn = 1\r\n\r\nWHERE t.rn = 1;\r\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Big monitoring with BT",
+      "transparent": true,
+      "type": "marcusolsson-dynamictext-panel"
+    }
+  ],
+  "preload": false,
+  "schemaVersion": 41,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "RLY BIG DASHBOARD",
+  "uid": "243514ef-52aa-4f44-9a96-84df5baf3fac",
+  "version": 6
+}
